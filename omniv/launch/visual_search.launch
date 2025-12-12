@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<launch>
+  <node name="visual_search_node" pkg="omniv" type="visual_search_node.py" output="screen"/>
+</launch>

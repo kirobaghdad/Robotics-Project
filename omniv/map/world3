@@ -7015,5 +7015,60 @@
       <allow_auto_disable>1</allow_auto_disable>
       <pose>-40.1218 25.0583 0 0 -0 0</pose>
     </model>
+    
+    <model name="target_object">
+      <pose>5 5 0.5 0 0 0</pose>
+      <static>true</static>
+      
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>1 1 1</size>
+            </box>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Bricks</name>
+            </script>
+            <ambient>1 1 1 1</ambient>
+          </material>
+        </visual>
+        
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>1 1 1</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    
+    <model name="sensor_camera">
+      <pose>3 2 2 0 0.5 0.785</pose>
+      <static>true</static>
+      
+      <link name="camera_link">
+        <sensor type="camera" name="image_picker_camera">
+          <camera>
+            <image>
+              <width>640</width>
+              <height>480</height>
+            </image>
+          </camera>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+            <robotNamespace>/omniv</robotNamespace>
+            <cameraName>sensor_camera</cameraName>
+            <imageTopicName>image_raw</imageTopicName>
+            <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+            <frameName>camera_link</frameName>
+          </plugin>
+        </sensor>
+      </link>
+    </model>
   </world>
 </sdf>
