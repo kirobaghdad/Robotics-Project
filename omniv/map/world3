@@ -7023,29 +7023,31 @@
       <link name="link">
         <visual name="visual">
           <geometry>
-            <cylinder>
-              <radius>0.3</radius>
-              <length>1.0</length>
-            </cylinder>
+            <box>
+              <size>1 1 1</size>
+            </box>
           </geometry>
           <material>
-            <ambient>1.0 0.0 0.0 1</ambient>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Bricks</name>
+            </script>
+            <ambient>1 1 1 1</ambient>
           </material>
         </visual>
         
         <collision name="collision">
           <geometry>
-            <cylinder>
-              <radius>0.3</radius>
-              <length>1.0</length>
-            </cylinder>
+            <box>
+              <size>1 1 1</size>
+            </box>
           </geometry>
         </collision>
       </link>
     </model>
     
     <model name="sensor_camera">
-      <pose>3 3 2 0 0.5 0.785</pose>
+      <pose>3 2 2 0 0.5 0.785</pose>
       <static>true</static>
       
       <link name="camera_link">

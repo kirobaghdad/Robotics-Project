@@ -1,0 +1,24 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug ROS Node",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/omniv/src/visual_search_node.py",
+            "console": "integratedTerminal",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}:${env:PYTHONPATH}",
+                "ROS_MASTER_URI": "http://localhost:11311"
+            },
+            "args": []
+        },
+        {
+            "name": "Attach to ROS Node",
+            "type": "python",
+            "request": "attach",
+            "port": 5678,
+            "host": "localhost"
+        }
+    ]
+}

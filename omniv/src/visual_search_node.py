@@ -18,7 +18,8 @@ class VisualSearchNode:
         self.bridge = CvBridge()
         
         # Load target image
-        target_path = os.path.join(os.path.dirname(__file__), '..', 'images', 'target_object.jpg')
+        target_path = os.path.join(os.path.dirname(__file__), '..', 'images')
+        
         if not os.path.exists(target_path):
             rospy.logerr(f"Target image not found: {target_path}")
             rospy.logerr("Please run image_picker first to capture target object")
@@ -36,12 +37,21 @@ class VisualSearchNode:
             cv_image = self.bridge.imgmsg_to_cv2(data, "bgr8")
             
             # Perform visual search
-            found = self.visual_search.search_object(cv_image)
+            found, similarity_img = self.visual_search.search_object(cv_image)
             
             if found:
                 rospy.loginfo("TARGET OBJECT FOUND!")
             else:
                 rospy.loginfo("Searching...")
+                
+            # Display camera frame
+            cv2.imshow("Camera Feed", cv_image)
+            
+            # Display similarity visualization
+            if similarity_img is not None:
+                cv2.imshow("Visual Search Result", similarity_img)
+            
+            cv2.waitKey(1)
                 
         except Exception as e:
             rospy.logerr(f"Error: {e}")
