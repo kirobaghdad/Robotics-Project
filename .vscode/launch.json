@@ -2,23 +2,32 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug ROS Node",
+            "name": "Debug Teleop",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/omniv/src/visual_search_node.py",
+            "program": "${workspaceFolder}/omniv/src/simple_teleop.py",
             "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
             "env": {
-                "PYTHONPATH": "${workspaceFolder}:${env:PYTHONPATH}",
-                "ROS_MASTER_URI": "http://localhost:11311"
+                "PYTHONPATH": "${workspaceFolder}/devel/lib/python3/dist-packages:${env:PYTHONPATH}",
+                "ROS_PACKAGE_PATH": "${workspaceFolder}/src:${env:ROS_PACKAGE_PATH}",
+                "CMAKE_PREFIX_PATH": "${workspaceFolder}/devel:${env:CMAKE_PREFIX_PATH}"
             },
             "args": []
         },
         {
-            "name": "Attach to ROS Node",
+            "name": "Debug Robot Controller",
             "type": "python",
-            "request": "attach",
-            "port": 5678,
-            "host": "localhost"
+            "request": "launch",
+            "program": "${workspaceFolder}/omniv/src/robot_controller.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/devel/lib/python3/dist-packages:${env:PYTHONPATH}",
+                "ROS_PACKAGE_PATH": "${workspaceFolder}/src:${env:ROS_PACKAGE_PATH}",
+                "CMAKE_PREFIX_PATH": "${workspaceFolder}/devel:${env:CMAKE_PREFIX_PATH}"
+            },
+            "args": []
         }
     ]
 }
