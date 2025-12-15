@@ -2,32 +2,15 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug Teleop",
+            "name": "Debug Autonomous Nav",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/omniv/src/simple_teleop.py",
+            "program": "${workspaceFolder}/omniv/src/autonomous_nav.py",
             "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}",
             "env": {
-                "PYTHONPATH": "${workspaceFolder}/devel/lib/python3/dist-packages:${env:PYTHONPATH}",
-                "ROS_PACKAGE_PATH": "${workspaceFolder}/src:${env:ROS_PACKAGE_PATH}",
-                "CMAKE_PREFIX_PATH": "${workspaceFolder}/devel:${env:CMAKE_PREFIX_PATH}"
-            },
-            "args": []
-        },
-        {
-            "name": "Debug Robot Controller",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/omniv/src/robot_controller.py",
-            "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}",
-            "env": {
-                "PYTHONPATH": "${workspaceFolder}/devel/lib/python3/dist-packages:${env:PYTHONPATH}",
-                "ROS_PACKAGE_PATH": "${workspaceFolder}/src:${env:ROS_PACKAGE_PATH}",
-                "CMAKE_PREFIX_PATH": "${workspaceFolder}/devel:${env:CMAKE_PREFIX_PATH}"
-            },
-            "args": []
+                "PYTHONUNBUFFERED": "1",
+                "ROS_MASTER_URI": "http://localhost:11311"
+            }
         }
     ]
 }
