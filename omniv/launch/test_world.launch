@@ -25,5 +25,5 @@
   <node pkg="omniv" type="mapping_node.py" name="mapping_node" output="screen"/>
   
   <!-- RViz -->
-  <node pkg="rviz" type="rviz" name="rviz"/>
+  <!-- <node pkg="rviz" type="rviz" name="rviz"/> -->
 </launch>

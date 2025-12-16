@@ -5,13 +5,28 @@
             "label": "run replace_robot.sh",
             "type": "shell",
             "command": "${workspaceFolder}/replace_robot.sh",
-            "problemMatcher": []
+            "problemMatcher": [],
+            "presentation": {
+                "close": true
+            }
         },
         {
             "label": "run del_markers.sh",
             "type": "shell",
             "command": "${workspaceFolder}/del_markers.sh",
-            "problemMatcher": []
+            "problemMatcher": [],
+            "presentation": {
+                "close": true
+            }
+        },
+        {
+            "label": "save map",
+            "type": "shell",
+            "command": "${workspaceFolder}/saving_map.sh",
+            "problemMatcher": [],
+            "presentation": {
+                "close": true
+            }
         }
     ]
 }

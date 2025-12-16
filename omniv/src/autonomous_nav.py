@@ -23,10 +23,14 @@ class AutonomousNav:
         self.laser_sub = rospy.Subscriber('/scan', LaserScan, self.laser_callback)
         self.odom_sub = rospy.Subscriber('/odom', Odometry, self.odom_callback)
         self.path_pub = rospy.Publisher('/path_trace', Marker, queue_size=10)
+        # self.clear_service = rospy.Service('/clear_path', Empty, self.clear_path_callback)
         
-        self.linear_speed = 10
-        self.angular_speed = 1.2
-        self.safe_distance = 1.5
+        
+        self.clear_path()
+        
+        self.linear_speed = 20  # Much faster mapping
+        self.angular_speed = 3.5  # Much faster turning
+        self.safe_distance = 2.5  # Look ahead more
         
         self.laser_data = None
         self.state = 'forward'
@@ -34,12 +38,16 @@ class AutonomousNav:
         self.path_points = []
         self.last_pos = None
         self.marker_count = 0
+        
         self.min_distance = 0.2
         
-        self.reset_service = rospy.Service('/reset_robot', Empty, self.reset_callback)
+        # Stuck detection
+        self.position_history = []
+        self.stuck_threshold = 0.5  # If moved less than this in 2 seconds
+        self.stuck_time_window = 2.0  # seconds
         
-        # Delete existing markers on startup
-        self.delete_existing_markers()
+        # # Delete existing markers on startup
+        # self.delete_existing_markers()
         
         rospy.loginfo("Autonomous navigation started")
 
@@ -63,26 +71,18 @@ class AutonomousNav:
         except:
             pass
     
-    def reset_callback(self, req):
-        """Reset markers and path"""
-        delete_model = rospy.ServiceProxy('/gazebo/delete_model', DeleteModel)
-        for i in range(self.marker_count):
-            try:
-                delete_model(f'path_marker_{i}')
-            except:
-                pass
-        
-        self.path_points = []
-        self.last_pos = None
-        self.marker_count = 0
-        rospy.loginfo("Robot reset")
-        return EmptyResponse()
-    
+
     def laser_callback(self, msg):
         self.laser_data = msg
     
     def odom_callback(self, msg):
         pos = msg.pose.pose.position
+        current_time = rospy.Time.now().to_sec()
+        
+        # Track position for stuck detection
+        self.position_history.append((current_time, pos.x, pos.y))
+        self.position_history = [(t, x, y) for t, x, y in self.position_history 
+                                  if current_time - t < self.stuck_time_window]
         
         if self.last_pos is None:
             self.last_pos = pos
@@ -131,6 +131,17 @@ class AutonomousNav:
         except:
             pass
     
+    def clear_path(self):
+        """Service callback to clear the path visualization"""
+        self.path_points = []
+        marker = Marker()
+        marker.header.frame_id = "world"
+        marker.header.stamp = rospy.Time.now()
+        marker.action = Marker.DELETEALL
+        self.path_pub.publish(marker)
+        rospy.loginfo("Path cleared")
+        return EmptyResponse()
+    
     def publish_path(self):
         marker = Marker()
         marker.header.frame_id = "world"
@@ -146,6 +157,17 @@ class AutonomousNav:
         marker.points = self.path_points
         self.path_pub.publish(marker)
 
+    def is_stuck(self):
+        if len(self.position_history) < 2:
+            return False
+        
+        oldest = self.position_history[0]
+        newest = self.position_history[-1]
+        
+        distance_moved = np.sqrt((newest[1] - oldest[1])**2 + (newest[2] - oldest[2])**2)
+        
+        return distance_moved < self.stuck_threshold
+    
     def get_min_distance_in_sector(self, ranges, start_angle, end_angle):
         if not ranges:
             return float('inf')
@@ -168,6 +190,16 @@ class AutonomousNav:
         if self.laser_data is None:
             return
         
+        # Check if stuck in corner
+        if self.is_stuck():
+            # Reverse and turn sharply
+            twist.linear.x = -self.linear_speed * 0.5
+            twist.angular.z = self.angular_speed * random.choice([-1, 1])
+            self.pub.publish(twist)
+            rospy.sleep(1.0)
+            self.position_history.clear()
+            return
+        
         front = self.get_min_distance_in_sector(self.laser_data.ranges, -0.3, 0.3)
         left = self.get_min_distance_in_sector(self.laser_data.ranges, 0.3, 1.5)
         right = self.get_min_distance_in_sector(self.laser_data.ranges, -1.5, -0.3)
@@ -180,7 +212,7 @@ class AutonomousNav:
             twist.linear.x = self.linear_speed
             twist.angular.z = 0
             
-            if random.random() < 0.3:
+            if random.random() < 0.1:  # Less random turning = faster exploration
                 self.state = 'turn'
                 self.turn_direction = random.choice([-1, 1])
         

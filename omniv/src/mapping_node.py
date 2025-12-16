@@ -13,9 +13,9 @@ class MappingNode:
         rospy.init_node('mapping_node')
         
         # Map parameters
-        self.map_resolution = 0.05  # meters per pixel
-        self.map_width = 400  # pixels
-        self.map_height = 400  # pixels
+        self.map_resolution = 0.5  # meters per pixel
+        self.map_width = 200  # pixels
+        self.map_height = 200  # pixels
         
         # Initialize occupancy grid
         self.occupancy_grid = np.full((self.map_height, self.map_width), -1, dtype=np.int8)
