@@ -7,6 +7,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/omniv/src/autonomous_nav.py",
             "console": "integratedTerminal",
+            "preLaunchTask": "run replace_robot.sh",
             "env": {
                 "PYTHONUNBUFFERED": "1",
                 "ROS_MASTER_URI": "http://localhost:11311"

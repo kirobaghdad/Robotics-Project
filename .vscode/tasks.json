@@ -1,0 +1,17 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "run replace_robot.sh",
+            "type": "shell",
+            "command": "${workspaceFolder}/replace_robot.sh",
+            "problemMatcher": []
+        },
+        {
+            "label": "run del_markers.sh",
+            "type": "shell",
+            "command": "${workspaceFolder}/del_markers.sh",
+            "problemMatcher": []
+        }
+    ]
+}

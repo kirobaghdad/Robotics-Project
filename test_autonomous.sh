@@ -8,5 +8,7 @@ echo ""
 source /opt/ros/noetic/setup.bash
 source ~/catkin_ws/devel/setup.bash
 
-roslaunch omniv test_world.launch
+trap 'kill $!; exit' SIGINT
+roslaunch omniv test_world.launch &
+wait
 

@@ -5,6 +5,7 @@ from geometry_msgs.msg import Twist
 from gazebo_msgs.srv import SetModelState
 from gazebo_msgs.msg import ModelState
 from geometry_msgs.msg import Pose, Point, Quaternion
+from std_srvs.srv import Empty, EmptyResponse
 import tf.transformations
 import math
 
@@ -24,8 +25,18 @@ class RobotController:
         # Subscribe to cmd_vel
         self.cmd_sub = rospy.Subscriber('/cmd_vel', Twist, self.cmd_callback)
         
+        # Service to reset robot position
+        self.reset_service = rospy.Service('/reset_robot', Empty, self.reset_callback)
+        
         rospy.loginfo("Robot controller started")
         
+    def reset_callback(self, req):
+        self.x = 0.0
+        self.y = 0.0
+        self.yaw = 0.0
+        rospy.loginfo("Robot position reset to origin")
+        return EmptyResponse()
+    
     def cmd_callback(self, msg):
         # Get velocities
         linear_vel_x = msg.linear.x  # forward/backward
