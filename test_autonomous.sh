@@ -15,7 +15,7 @@ echo "SLAM started (PID: $SLAM_PID)"
 sleep 2
 
 # Launch test world in background
-roslaunch omniv test_world.launch > /tmp/test_world.log 2>&1 &
+roslaunch omniv ackerman.launch > /tmp/test_world.log 2>&1 &
 WORLD_PID=$!
 echo "Test world started (PID: $WORLD_PID)"
 

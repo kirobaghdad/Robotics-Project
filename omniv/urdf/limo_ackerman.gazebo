@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<robot name="limo_ackerman" xmlns:xacro="http://ros.org/wiki/xacro">
+    <xacro:include filename="$(find omniv)/urdf/limo_gazebo.gazebo" />
+
+    <!-- Actuator configurations -->
+    <xacro:limo_wheel_transmission wheel_prefix="front_right" />
+    <xacro:limo_wheel_transmission wheel_prefix="front_left" />
+    <xacro:limo_wheel_transmission wheel_prefix="rear_left" />
+    <xacro:limo_wheel_transmission wheel_prefix="rear_right" />
+    <xacro:limo_steering_hinge_transmission wheel_prefix="left_steering_hinge" />
+    <xacro:limo_steering_hinge_transmission wheel_prefix="right_steering_hinge" />
+    <!-- Controller configurations -->
+    <xacro:gazebo_laser frame_prefix="laser" />
+    <xacro:gazebo_depth_camera frame_prefix="depth_camera" />
+    <xacro:gazebo_imu frame_prefix="imu" />
+
+    <!-- Rear left wheel friction -->
+    <gazebo reference="rear_left_wheel_link">
+        <mu1>1.0</mu1>
+        <mu2>1.0</mu2>
+        <kp>1000000.0</kp>
+        <kd>100.0</kd>
+        <minDepth>0.001</minDepth>
+        <maxVel>1.0</maxVel>
+    </gazebo>
+
+    <!-- Rear right wheel friction -->
+    <gazebo reference="rear_right_wheel_link">
+        <mu1>1.0</mu1>
+        <mu2>1.0</mu2>
+        <kp>1000000.0</kp>
+        <kd>100.0</kd>
+        <minDepth>0.001</minDepth>
+        <maxVel>1.0</maxVel>
+    </gazebo>
+
+    <!-- Front wheels friction -->
+    <gazebo reference="front_left_wheel_link">
+        <mu1>0.1</mu1>
+        <mu2>0.1</mu2>
+    </gazebo>
+
+    <gazebo reference="front_right_wheel_link">
+        <mu1>0.1</mu1>
+        <mu2>0.1</mu2>
+    </gazebo>
+
+    <gazebo>
+        <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+            <robotNamespace>$(arg robot_namespace)</robotNamespace>
+        </plugin>
+
+        <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
+            <updateRate>50.0</updateRate>
+            <leftJoint>rear_left_wheel</leftJoint>
+            <rightJoint>rear_right_wheel</rightJoint>
+            <wheelSeparation>0.14</wheelSeparation>
+            <wheelDiameter>0.09</wheelDiameter>
+            <wheelAcceleration>1.0</wheelAcceleration>
+            <torque>20</torque>
+            <commandTopic>cmd_vel</commandTopic>
+            <odometryTopic>odom</odometryTopic>
+            <odometryFrame>odom</odometryFrame>
+            <robotBaseFrame>base_footprint</robotBaseFrame>
+            <publishWheelTF>false</publishWheelTF>
+            <publishWheelJointState>true</publishWheelJointState>
+            <publishTf>true</publishTf>
+            <publishOdomTF>true</publishOdomTF>
+            <legacyMode>false</legacyMode>
+        </plugin>
+    </gazebo>
+</robot>

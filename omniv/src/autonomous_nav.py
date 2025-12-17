@@ -28,9 +28,9 @@ class AutonomousNav:
         
         self.clear_path()
         
-        self.linear_speed = 20  # Much faster mapping
-        self.angular_speed = 3.5  # Much faster turning
-        self.safe_distance = 2.5  # Look ahead more
+        self.linear_speed = 3  # Realistic speed for small robot
+        self.angular_speed = 1.0  # Realistic turning speed
+        self.safe_distance = 0.5  # Appropriate safe distance
         
         self.laser_data = None
         self.state = 'forward'

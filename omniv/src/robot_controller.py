@@ -58,7 +58,7 @@ class RobotController:
         
         # Create model state
         model_state = ModelState()
-        model_state.model_name = 'fancy_robot'
+        model_state.model_name = 'limo_ackerman'
         model_state.pose = Pose(
             position=Point(self.x, self.y, 0),
             orientation=Quaternion(*quaternion)

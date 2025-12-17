@@ -42,8 +42,8 @@ class MappingNode:
 
     def laser_callback(self, laser_msg):
         try:
-            # Get robot pose in map frame
-            transform = self.tf_buffer.lookup_transform('map', 'base_link', rospy.Time())
+            # Get robot pose in odom frame
+            transform = self.tf_buffer.lookup_transform('odom', 'base_footprint', rospy.Time())
             robot_x = transform.transform.translation.x
             robot_y = transform.transform.translation.y
             
@@ -109,7 +109,7 @@ class MappingNode:
         """Publish the occupancy grid map"""
         map_msg = OccupancyGrid()
         map_msg.header.stamp = rospy.Time.now()
-        map_msg.header.frame_id = "map"
+        map_msg.header.frame_id = "odom"
         
         # Map metadata
         map_msg.info.resolution = self.map_resolution
