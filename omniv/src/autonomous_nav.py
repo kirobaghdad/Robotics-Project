@@ -28,7 +28,7 @@ class AutonomousNav:
         
         self.clear_path()
         
-        self.linear_speed = 3  # Realistic speed for small robot
+        self.linear_speed = 0.5  # Realistic speed for small robot
         self.angular_speed = 1.0  # Realistic turning speed
         self.safe_distance = 0.5  # Appropriate safe distance
         
@@ -43,7 +43,7 @@ class AutonomousNav:
         
         # Stuck detection
         self.position_history = []
-        self.stuck_threshold = 0.5  # If moved less than this in 2 seconds
+        self.stuck_threshold = 0.1  # If moved less than this in 2 seconds
         self.stuck_time_window = 2.0  # seconds
         
         # # Delete existing markers on startup
@@ -190,15 +190,15 @@ class AutonomousNav:
         if self.laser_data is None:
             return
         
-        # Check if stuck in corner
-        if self.is_stuck():
-            # Reverse and turn sharply
-            twist.linear.x = -self.linear_speed * 0.5
-            twist.angular.z = self.angular_speed * random.choice([-1, 1])
-            self.pub.publish(twist)
-            rospy.sleep(1.0)
-            self.position_history.clear()
-            return
+        # # Check if stuck in corner
+        # if self.is_stuck():
+        #     # Reverse and turn sharply
+        #     twist.linear.x = -self.linear_speed * 0.5
+        #     twist.angular.z = self.angular_speed * random.choice([-1, 1])
+        #     self.pub.publish(twist)
+        #     rospy.sleep(1.0)
+        #     self.position_history.clear()
+        #     return
         
         front = self.get_min_distance_in_sector(self.laser_data.ranges, -0.3, 0.3)
         left = self.get_min_distance_in_sector(self.laser_data.ranges, 0.3, 1.5)

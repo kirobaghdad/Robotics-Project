@@ -14,35 +14,14 @@
     <xacro:gazebo_depth_camera frame_prefix="depth_camera" />
     <xacro:gazebo_imu frame_prefix="imu" />
 
-    <!-- Rear left wheel friction -->
-    <gazebo reference="rear_left_wheel_link">
-        <mu1>1.0</mu1>
-        <mu2>1.0</mu2>
-        <kp>1000000.0</kp>
-        <kd>100.0</kd>
-        <minDepth>0.001</minDepth>
-        <maxVel>1.0</maxVel>
-    </gazebo>
-
-    <!-- Rear right wheel friction -->
-    <gazebo reference="rear_right_wheel_link">
-        <mu1>1.0</mu1>
-        <mu2>1.0</mu2>
-        <kp>1000000.0</kp>
-        <kd>100.0</kd>
-        <minDepth>0.001</minDepth>
-        <maxVel>1.0</maxVel>
-    </gazebo>
-
-    <!-- Front wheels friction -->
-    <gazebo reference="front_left_wheel_link">
-        <mu1>0.1</mu1>
-        <mu2>0.1</mu2>
-    </gazebo>
-
-    <gazebo reference="front_right_wheel_link">
-        <mu1>0.1</mu1>
-        <mu2>0.1</mu2>
+    <gazebo>
+        <mu1 value="10"/>
+        <mu2 value="10"/>
+        <kp value="10000000.0" />
+        <kd value="1.0" />
+        <fdir1 value="1 0 0"/>
+        <minDepth value="0.001" />
+        <maxContacts value="64"/>
     </gazebo>
 
     <gazebo>
@@ -51,17 +30,25 @@
         </plugin>
 
         <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
-            <updateRate>50.0</updateRate>
-            <leftJoint>rear_left_wheel</leftJoint>
-            <rightJoint>rear_right_wheel</rightJoint>
-            <wheelSeparation>0.14</wheelSeparation>
+            <updateRate>100.0</updateRate>
+            <robotNamespace>$(arg robot_namespace)</robotNamespace>
+            <leftFrontJoint>front_left_wheel</leftFrontJoint>
+            <rightFrontJoint>front_right_wheel</rightFrontJoint>
+            <leftRearJoint>rear_left_wheel</leftRearJoint>
+            <rightRearJoint>rear_right_wheel</rightRearJoint>
+            <leftHingeJoint>left_steering_hinge_wheel</leftHingeJoint>
+            <rightHingeJoint>right_steering_hinge_wheel</rightHingeJoint>
+            <wheelSeparation>0.172</wheelSeparation>
             <wheelDiameter>0.09</wheelDiameter>
-            <wheelAcceleration>1.0</wheelAcceleration>
-            <torque>20</torque>
+            <robotBaseFrame>base_footprint</robotBaseFrame>
             <commandTopic>cmd_vel</commandTopic>
+            <torque>50</torque>
+            <broadcastTF>true</broadcastTF>
             <odometryTopic>odom</odometryTopic>
             <odometryFrame>odom</odometryFrame>
-            <robotBaseFrame>base_footprint</robotBaseFrame>
+            <covariance_x>0.000100</covariance_x>
+            <covariance_y>0.000100</covariance_y>
+            <covariance_yaw>0.010000</covariance_yaw>
             <publishWheelTF>false</publishWheelTF>
             <publishWheelJointState>true</publishWheelJointState>
             <publishTf>true</publishTf>
@@ -70,3 +57,4 @@
         </plugin>
     </gazebo>
 </robot>
+

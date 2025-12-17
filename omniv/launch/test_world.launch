@@ -21,7 +21,7 @@
   <!-- Spawn LIMO robot -->
   <param name="robot_description" command="$(find xacro)/xacro '$(find omniv)/urdf/limo_ackerman.xacro'" />
   
-  <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf" args="-urdf -model limo_ackerman -param robot_description -x 0 -y 0 -z 0.2" output="screen" launch-prefix="bash -c 'sleep 3; $0 $@'" />
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf" args="-urdf -model limo_ackerman -param robot_description -x 0 -y 0 -z 0" />
   
   <!-- Publish TF transforms -->
   <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher"/>
@@ -29,11 +29,11 @@
   <!-- Static transform for map to odom -->
   <node pkg="tf2_ros" type="static_transform_publisher" name="map_to_odom" args="0 0 0 0 0 0 map odom"/>
   
-  <!-- Static transform for odom to base_footprint (DISABLED - diff_drive plugin publishes this) -->
-  <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="odom_to_base_footprint" args="0 0 0 0 0 0 odom base_footprint"/> -->
+  Static transform for odom to base_footprint (temporary fix)
+  <node pkg="tf2_ros" type="static_transform_publisher" name="odom_to_base_footprint" args="0 0 0 0 0 0 odom base_footprint"/>
 
-  <!-- Robot controller (DISABLED - conflicts with diff_drive plugin) -->
-  <!-- <node pkg="omniv" type="robot_controller.py" name="robot_controller" output="screen"/> -->
+  <!-- Robot controller -->
+  <node pkg="omniv" type="robot_controller.py" name="robot_controller" output="screen"/>
 
   <!-- Mapping node -->
   <node pkg="omniv" type="mapping_node.py" name="mapping_node" output="screen"/>

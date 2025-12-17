@@ -20,7 +20,10 @@ class RobotController:
         # Robot state
         self.x = 0.0
         self.y = 0.0
+        self.z = 0.2  # Match launch file z position
         self.yaw = 0.0
+        self.last_time = rospy.Time.now()
+        self.model_name = 'limo_ackerman'
         
         # Subscribe to cmd_vel
         self.cmd_sub = rospy.Subscriber('/cmd_vel', Twist, self.cmd_callback)
@@ -33,6 +36,7 @@ class RobotController:
     def reset_callback(self, req):
         self.x = 0.0
         self.y = 0.0
+        self.z = 0.2
         self.yaw = 0.0
         rospy.loginfo("Robot position reset to origin")
         return EmptyResponse()
@@ -44,7 +48,9 @@ class RobotController:
         angular_vel = msg.angular.z  # rotation
         
         # Update robot pose (simple integration)
-        dt = 0.1  # 10Hz update rate
+        current_time = rospy.Time.now()
+        dt = (current_time - self.last_time).to_sec()
+        self.last_time = current_time
         # Transform velocities from robot frame to world frame
         world_vel_x = linear_vel_x * math.cos(self.yaw) - linear_vel_y * math.sin(self.yaw)
         world_vel_y = linear_vel_x * math.sin(self.yaw) + linear_vel_y * math.cos(self.yaw)
@@ -53,14 +59,16 @@ class RobotController:
         self.y += world_vel_y * dt
         self.yaw += angular_vel * dt
         
+        rospy.loginfo(f"Robot position: x={self.x}, y={self.y}, yaw={self.yaw}")
+        
         # Create quaternion from yaw
         quaternion = tf.transformations.quaternion_from_euler(0, 0, self.yaw)
         
         # Create model state
         model_state = ModelState()
-        model_state.model_name = 'limo_ackerman'
+        model_state.model_name = self.model_name
         model_state.pose = Pose(
-            position=Point(self.x, self.y, 0),
+            position=Point(self.x, self.y, self.z),
             orientation=Quaternion(*quaternion)
         )
         

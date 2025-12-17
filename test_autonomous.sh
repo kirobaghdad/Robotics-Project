@@ -25,3 +25,9 @@ trap "kill $SLAM_PID $WORLD_PID 2>/dev/null; exit" SIGINT SIGTERM
 echo "Both launches running. Press Ctrl+C to stop."
 wait
 
+
+# Kill RViz and Gazebo
+echo "Killing RViz and Gazebo..."
+killall -9 rviz gzclient gzserver 2>/dev/null
+echo "RViz and Gazebo terminated."
+
