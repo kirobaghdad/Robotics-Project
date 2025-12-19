@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-  <node pkg="slam_toolbox" type="async_slam_toolbox_node" name="slam_toolbox" output="screen">
-    <rosparam command="load" file="$(find omniv)/config/slam_config.yaml" />
-  </node>
-  
-  <!-- <node pkg="rviz" type="rviz" name="rviz" args="-d $(find omniv)/config/rviz_config.rviz" output="screen" required="true" /> -->
-</launch>

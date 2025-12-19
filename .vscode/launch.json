@@ -5,10 +5,10 @@
             "name": "Debug Autonomous Nav",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/omniv/src/autonomous_nav.py",
+            "program": "${workspaceFolder}/limo_base/src/wander.py",
             "console": "integratedTerminal",
-            "preLaunchTask": "run replace_robot.sh",
-            "postDebugTask": "save map",
+            // "preLaunchTask": "run replace_robot.sh",
+            // "postDebugTask": "save map",
             "env": {
                 "PYTHONUNBUFFERED": "1",
                 "ROS_MASTER_URI": "http://localhost:11311"
