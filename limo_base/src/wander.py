@@ -57,13 +57,13 @@ class AutoWander:
         # Initialize next change time. Wait for valid time if using sim time.
         while rospy.Time.now().is_zero() and not rospy.is_shutdown():
             rate.sleep()
-        next_state_change = rospy.Time.now() + rospy.Duration(random.uniform(5.0, 10.0))
+        next_state_change = rospy.Time.now() + rospy.Duration(random.uniform(3.0, 6.0))
 
         while not rospy.is_shutdown():
             if self.obstacle_detected:
                 # Wall ahead!
                 # Decelerate smoothly to avoid pitching
-                self.move_cmd.linear.x = max(0.0, self.move_cmd.linear.x - 0.1)
+                self.move_cmd.linear.x = max(0.0, self.move_cmd.linear.x - 0.2)
                 
                 # If we were going straight, pick a new random turn direction
                 if self.move_cmd.angular.z == 0.0:
@@ -72,25 +72,25 @@ class AutoWander:
                 
                 # Reset random wander timer so we don't interrupt recovery
                 state = "FORWARD"
-                next_state_change = rospy.Time.now() + rospy.Duration(random.uniform(5.0, 10.0))
+                next_state_change = rospy.Time.now() + rospy.Duration(random.uniform(3.0, 6.0))
             else:
                 # Path clear!
                 if state == "FORWARD":
-                    self.move_cmd.linear.x = min(self.linear_speed, self.move_cmd.linear.x + 0.1)
+                    self.move_cmd.linear.x = min(self.linear_speed, self.move_cmd.linear.x + 0.3)
                     self.move_cmd.angular.z = 0.0
                     
                     if rospy.Time.now() > next_state_change:
                         state = "RANDOM_TURN"
-                        next_state_change = rospy.Time.now() + rospy.Duration(random.uniform(1.0, 3.0))
+                        next_state_change = rospy.Time.now() + rospy.Duration(random.uniform(0.5, 1.5))
                         self.turn_direction = 1 if random.choice([True, False]) else -1
                 
                 elif state == "RANDOM_TURN":
-                    self.move_cmd.linear.x = max(0.0, self.move_cmd.linear.x - 0.1)
+                    self.move_cmd.linear.x = max(0.0, self.move_cmd.linear.x - 0.3)
                     self.move_cmd.angular.z = self.angular_speed * self.turn_direction
                     
                     if rospy.Time.now() > next_state_change:
                         state = "FORWARD"
-                        next_state_change = rospy.Time.now() + rospy.Duration(random.uniform(10.0, 15.0))
+                        next_state_change = rospy.Time.now() + rospy.Duration(random.uniform(8.0, 15.0))
                 
             self.pub.publish(self.move_cmd)
             rate.sleep()

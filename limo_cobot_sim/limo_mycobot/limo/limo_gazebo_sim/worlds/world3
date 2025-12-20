@@ -1582,6 +1582,32 @@
       </link>
       <static>1</static>
     </model>
+    <model name='target_cube'>
+      <pose>-8 -8 0.25 0 0 0</pose>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <box>
+              <size>0.5 0.5 0.5</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <box>
+              <size>0.5 0.5 0.5</size>
+            </box>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Bricks</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+    </model>
     <state world_name='default'>
       <sim_time>22 441000000</sim_time>
       <real_time>22 921213629</real_time>

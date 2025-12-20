@@ -26,5 +26,10 @@ sleep 5
 echo "Launching Gmapping..."
 roslaunch limo_bringup limo_gmapping.launch &
 
+# 3. Launch Visual Search Node
+sleep 3
+echo "Launching Visual Search..."
+rosrun limo_base visual_search_node.py &
+
 # Wait for all background processes to finish
 wait
