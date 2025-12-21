@@ -31,4 +31,10 @@ sleep 2
 echo "Launching Wander nodes for $NUM_ROBOTS robots..."
 roslaunch limo_bringup multi_robot_wander.launch num_robots:=$NUM_ROBOTS &
 
+sleep 2
+echo "Launching Visual Search nodes for $NUM_ROBOTS robots..."
+for i in $(seq 0 $((NUM_ROBOTS-1))); do
+    rosrun limo_base visual_search_node.py robot_$i &
+done
+
 wait
