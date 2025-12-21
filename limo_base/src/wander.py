@@ -9,23 +9,25 @@ from std_msgs.msg import Bool
 class AutoWander:
     def __init__(self, robot_name):
         rospy.init_node(f'{robot_name}_wander_node', anonymous=False)
+        random.seed(hash(robot_name) + int(rospy.Time.now().to_sec() * 1000))
         
         self.robot_name = robot_name
         self.cmd_topic = f'/{robot_name}/cmd_vel'
         self.scan_topic = f'/{robot_name}/scan'
         
-        self.min_dist_to_wall = 1
-        self.linear_speed = 0.5
-        self.angular_speed = 0.6
+        self.linear_speed = random.uniform(0.6, 1.0)
+        self.angular_speed = random.uniform(0.8, 1.2)
         self.mapping_complete = False
+        self.scan_data = None
+        self.stuck_counter = 0
+        self.exploration_bias = random.uniform(-0.3, 0.3)
+        self.last_position_check = rospy.Time.now()
 
         self.pub = rospy.Publisher(self.cmd_topic, Twist, queue_size=10)
         self.sub = rospy.Subscriber(self.scan_topic, LaserScan, self.scan_callback)
         rospy.Subscriber('/mapping_complete', Bool, self.complete_callback)
         
         self.move_cmd = Twist()
-        self.obstacle_detected = False
-        self.turn_direction = 1
 
     def complete_callback(self, msg):
         if msg.data:
@@ -33,55 +35,88 @@ class AutoWander:
             rospy.loginfo(f"{self.robot_name}: Received mapping complete signal, stopping...")
 
     def scan_callback(self, data):
-        mid_index = len(data.ranges) // 2
-        window_size = 40
-        valid_ranges = [r for r in data.ranges[mid_index-window_size : mid_index+window_size] if r > 0.05]
-        
-        if len(valid_ranges) > 0:
-            min_front_dist = min(valid_ranges)
-        else:
-            min_front_dist = 10.0
+        self.scan_data = data
 
-        self.obstacle_detected = min_front_dist < self.min_dist_to_wall
+    def find_best_direction(self):
+        if not self.scan_data:
+            return 0.0
+        
+        ranges = self.scan_data.ranges
+        n = len(ranges)
+        sectors = 12
+        sector_size = n // sectors
+        sector_scores = []
+        
+        for i in range(sectors):
+            start = i * sector_size
+            end = start + sector_size
+            sector_ranges = [r for r in ranges[start:end] if 0.1 < r < 10.0]
+            
+            if sector_ranges:
+                avg_dist = sum(sector_ranges) / len(sector_ranges)
+                min_dist = min(sector_ranges)
+                
+                if avg_dist > 3.0:
+                    score = avg_dist * 0.2 + min_dist * 0.3
+                else:
+                    score = avg_dist * 0.8 + min_dist * 0.5
+                
+                score += random.uniform(-0.3, 0.3)
+            else:
+                score = 0.0
+            
+            sector_scores.append(score)
+        
+        top_sectors = sorted(range(len(sector_scores)), key=lambda i: sector_scores[i], reverse=True)[:3]
+        best_sector = random.choice(top_sectors)
+        
+        angle_per_sector = 2 * 3.14159 / sectors
+        target_angle = (best_sector * angle_per_sector) - 3.14159 + random.uniform(-0.3, 0.3)
+        
+        return target_angle
 
     def run(self):
         rate = rospy.Rate(10)
-        state = "FORWARD"
         
-        while rospy.Time.now().is_zero() and not rospy.is_shutdown():
-            rate.sleep()
-        next_state_change = rospy.Time.now() + rospy.Duration(random.uniform(3.0, 6.0))
-
         while not rospy.is_shutdown():
             if self.mapping_complete:
                 self.move_cmd.linear.x = 0
                 self.move_cmd.angular.z = 0
                 self.pub.publish(self.move_cmd)
-                rospy.loginfo(f"{self.robot_name}: Stopped due to mapping completion")
                 break
-                
-            if self.obstacle_detected:
-                self.move_cmd.linear.x = max(0.0, self.move_cmd.linear.x - 0.1)
-                if self.move_cmd.angular.z == 0.0:
-                    self.turn_direction = 1 if random.choice([True, False]) else -1
-                self.move_cmd.angular.z = self.angular_speed * self.turn_direction
-                state = "FORWARD"
-                next_state_change = rospy.Time.now() + rospy.Duration(random.uniform(3.0, 6.0))
+            
+            if not self.scan_data:
+                rate.sleep()
+                continue
+            
+            ranges = self.scan_data.ranges
+            mid = len(ranges) // 2
+            front_ranges = [r for r in ranges[mid-30:mid+30] if r > 0.1]
+            left_ranges = [r for r in ranges[mid+30:mid+90] if r > 0.1]
+            right_ranges = [r for r in ranges[mid-90:mid-30] if r > 0.1]
+            
+            min_front = min(front_ranges) if front_ranges else 10.0
+            min_left = min(left_ranges) if left_ranges else 10.0
+            min_right = min(right_ranges) if right_ranges else 10.0
+            
+            if min_front < 0.5 or (min_left < 0.4 and min_right < 0.4):
+                self.stuck_counter += 1
             else:
-                if state == "FORWARD":
-                    self.move_cmd.linear.x = min(self.linear_speed, self.move_cmd.linear.x + 0.1)
-                    self.move_cmd.angular.z = 0.0
-                    if rospy.Time.now() > next_state_change:
-                        state = "RANDOM_TURN"
-                        next_state_change = rospy.Time.now() + rospy.Duration(random.uniform(0.5, 1.5))
-                        self.turn_direction = 1 if random.choice([True, False]) else -1
-                elif state == "RANDOM_TURN":
-                    self.move_cmd.linear.x = max(0.2, self.move_cmd.linear.x - 0.1)
-                    self.move_cmd.angular.z = self.angular_speed * self.turn_direction
-                    if rospy.Time.now() > next_state_change:
-                        state = "FORWARD"
-                        next_state_change = rospy.Time.now() + rospy.Duration(random.uniform(8.0, 15.0))
-                
+                self.stuck_counter = max(0, self.stuck_counter - 1)
+            
+            if self.stuck_counter > 15:
+                self.move_cmd.linear.x = -0.3
+                self.move_cmd.angular.z = random.choice([-1.2, 1.2])
+                self.stuck_counter = 0
+            elif min_front < 0.7:
+                self.move_cmd.linear.x = 0.0
+                target_angle = self.find_best_direction()
+                self.move_cmd.angular.z = max(-self.angular_speed, min(self.angular_speed, target_angle * 1.2))
+            else:
+                target_angle = self.find_best_direction()
+                self.move_cmd.linear.x = self.linear_speed
+                self.move_cmd.angular.z = max(-0.6, min(0.6, target_angle * 0.5 + self.exploration_bias))
+            
             self.pub.publish(self.move_cmd)
             rate.sleep()
 
