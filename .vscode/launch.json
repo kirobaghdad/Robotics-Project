@@ -5,7 +5,7 @@
             "name": "Debug Autonomous Nav",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/limo_base/src/wander.py",
+            "program": "${workspaceFolder}/limo_base/src/multi_robot_wander.py",
             "console": "integratedTerminal",
             // "preLaunchTask": "run replace_robot.sh",
             // "postDebugTask": "save map",

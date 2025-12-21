@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<launch>
+  
+  <!-- Robot 1 Wander Node -->
+  <group ns="robot1">
+    <node pkg="limo_base" type="multi_robot_wander.py" name="wander_node" output="screen"/>
+  </group>
+
+  <!-- Robot 2 Wander Node -->
+  <group ns="robot2">
+    <node pkg="limo_base" type="multi_robot_wander.py" name="wander_node" output="screen"/>
+  </group>
+
+  <!-- Robot 3 Wander Node -->
+  <group ns="robot3">
+    <node pkg="limo_base" type="multi_robot_wander.py" name="wander_node" output="screen"/>
+  </group>
+
+  <!-- Robot 4 Wander Node -->
+  <group ns="robot4">
+    <node pkg="limo_base" type="multi_robot_wander.py" name="wander_node" output="screen"/>
+  </group>
+
+</launch>

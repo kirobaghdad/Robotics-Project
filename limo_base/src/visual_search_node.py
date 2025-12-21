@@ -13,7 +13,9 @@ from visual_search import VisualSearch
 
 class VisualSearchNode:
     def __init__(self):
-        rospy.init_node('visual_search_node', anonymous=True)
+        ns = rospy.get_namespace()  # e.g., "/robot1/"
+
+        rospy.init_node(ns +'visual_search_node', anonymous=True)
         
         self.bridge = CvBridge()
         self.object_found = False
@@ -30,7 +32,7 @@ class VisualSearchNode:
         self.visual_search = VisualSearch(target_path)
         
         # Subscribe to sensor camera
-        self.image_sub = rospy.Subscriber('/limo/color/image_raw', Image, self.search_callback)
+        self.image_sub = rospy.Subscriber(ns + '/limo/color/image_raw', Image, self.search_callback)
         
         rospy.loginfo("Visual Search Node started")
         

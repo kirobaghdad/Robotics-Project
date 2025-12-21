@@ -17,19 +17,19 @@ cleanup() {
 # Trap SIGINT (Ctrl+C) to call the cleanup function
 trap cleanup SIGINT
 
-# 1. Launch Gazebo simulation in the background
-echo "Launching Gazebo..."
-roslaunch limo_gazebo_sim limo_four_diff.launch &
+# 1. Launch Gazebo simulation with multiple robots
+echo "Launching Gazebo with 4 robots..."
+roslaunch limo_gazebo_sim multi_limo.launch &
 
-# 2. Launch Gmapping in the background (wait a bit for Gazebo to initialize)
+# 2. Launch Gmapping for all robots (wait a bit for Gazebo to initialize)
 sleep 5
-echo "Launching Gmapping..."
-roslaunch limo_bringup limo_gmapping.launch &
+echo "Launching Gmapping for all robots + RViz..."
+roslaunch limo_bringup multi_gmapping.launch &
 
-# 3. Launch Visual Search Node
+# 3. Launch Wander nodes for all robots
 sleep 3
-echo "Launching Visual Search..."
-rosrun limo_base visual_search_node.py &
+echo "Launching Wander nodes for all robots..."
+roslaunch limo_bringup multi_wander.launch &
 
 # Wait for all background processes to finish
 wait

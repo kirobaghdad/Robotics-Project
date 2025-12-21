@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<launch>
+
+  <include file="$(find limo_bringup)/launch/gmapping_single.launch">
+    <arg name="robot_name" value="robot1"/>
+  </include>
+
+  <include file="$(find limo_bringup)/launch/gmapping_single.launch">
+    <arg name="robot_name" value="robot2"/>
+  </include>
+
+  <include file="$(find limo_bringup)/launch/gmapping_single.launch">
+    <arg name="robot_name" value="robot3"/>
+  </include>
+
+  <include file="$(find limo_bringup)/launch/gmapping_single.launch">
+    <arg name="robot_name" value="robot4"/>
+  </include>
+
+  <!-- Launch RViz with multi-robot gmapping config -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find limo_bringup)/rviz/multi_robot_gmapping.rviz" output="screen"/>
+
+</launch>

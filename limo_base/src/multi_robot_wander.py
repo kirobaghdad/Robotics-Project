@@ -6,26 +6,27 @@ from geometry_msgs.msg import Twist
 
 class AutoWander:
     def __init__(self):
+        
+        # Get the namespace of this robot
+        ns = rospy.get_namespace()  # e.g., "/robot1/"
+
         rospy.init_node('wander_node')
         
-        # --- CONFIGURATION ---
-        # If your robot doesn't move, check these topic names!
-        self.cmd_topic = '/cmd_vel'  # Might need to be '/limo/cmd_vel'
-        self.scan_topic = '/scan'    # Might need to be '/scan'
-        
+        # Publishers and Subscribers with namespace
+        self.pub = rospy.Publisher(ns + 'cmd_vel', Twist, queue_size=10)
+        self.sub = rospy.Subscriber(ns + 'scan', LaserScan, self.scan_callback)
+
         # TODO: account for the real size of the world on deployment
         self.min_dist_to_wall = 1  # Stop if wall is closer than 0.6 meters
         self.linear_speed = 1
         self.angular_speed = 1
-        # ---------------------
-
-        self.pub = rospy.Publisher(self.cmd_topic, Twist, queue_size=10)
-        self.sub = rospy.Subscriber(self.scan_topic, LaserScan, self.scan_callback)
+        
         self.move_cmd = Twist()
         self.obstacle_detected = False
         self.turn_direction = 1
 
     def scan_callback(self, data):
+        """Callback for laser scan messages."""
         # The laser scanner gives us an array of distances.
         # We check the middle slice (front of robot) for obstacles.
         

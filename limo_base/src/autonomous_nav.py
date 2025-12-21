@@ -16,6 +16,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 class AutonomousNav:
     def __init__(self):
+        
         rospy.init_node('autonomous_nav')
 
         
