@@ -4,8 +4,10 @@ import sys
 import numpy as np
 import cv2
 import os
+import tf2_ros
 from nav_msgs.msg import OccupancyGrid
 from std_msgs.msg import Bool
+from geometry_msgs.msg import TransformStamped
 
 class MapMerger:
     def __init__(self, num_robots):
@@ -15,6 +17,7 @@ class MapMerger:
         self.prev_unknown_count = None
         self.stable_count = 0
         self.mapping_complete = False
+        self.tf_broadcaster = tf2_ros.StaticTransformBroadcaster()
         
         for i in range(num_robots):
             robot_name = f'robot_{i}'
@@ -23,7 +26,29 @@ class MapMerger:
         
         self.merged_pub = rospy.Publisher('/map', OccupancyGrid, queue_size=10)
         self.complete_pub = rospy.Publisher('/mapping_complete', Bool, queue_size=1)
+        
+        # Publish static transforms from map to robot_X/map
+        self.publish_static_transforms()
+        
         rospy.loginfo(f"Map merger initialized for {num_robots} robots")
+
+    def publish_static_transforms(self):
+        transforms = []
+        for i in range(self.num_robots):
+            t = TransformStamped()
+            t.header.stamp = rospy.Time.now()
+            t.header.frame_id = "map"
+            t.child_frame_id = f"robot_{i}/map"
+            t.transform.translation.x = 0.0
+            t.transform.translation.y = 0.0
+            t.transform.translation.z = 0.0
+            t.transform.rotation.x = 0.0
+            t.transform.rotation.y = 0.0
+            t.transform.rotation.z = 0.0
+            t.transform.rotation.w = 1.0
+            transforms.append(t)
+        
+        self.tf_broadcaster.sendTransform(transforms)
 
     def map_callback(self, msg, robot_name):
         self.robot_maps[robot_name] = msg

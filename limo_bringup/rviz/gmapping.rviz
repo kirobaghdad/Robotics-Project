@@ -146,6 +146,34 @@ Visualization Manager:
       Use rainbow: true
       Value: true
     - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/LaserScan
+      Color: 255; 255; 0
+      Color Transformer: FlatColor
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Min Color: 0; 0; 0
+      Name: LaserScan_Robot_3
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.05000000074505806
+      Style: Flat Squares
+      Topic: /robot_3/scan
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: true
+    - Alpha: 1
       Class: rviz/Axes
       Enabled: true
       Length: 0.5
@@ -172,10 +200,19 @@ Visualization Manager:
       Reference Frame: robot_2/base_footprint
       Show Trail: false
       Value: true
+    - Alpha: 1
+      Class: rviz/Axes
+      Enabled: true
+      Length: 0.5
+      Name: Axes_Robot_3
+      Radius: 0.05
+      Reference Frame: robot_3/base_footprint
+      Show Trail: false
+      Value: true
     - Class: rviz/Camera
       Enabled: true
       Image Rendering: background and overlay
-      Image Topic: /robot_0/color/image_raw
+      Image Topic: /robot_0/camera_ir/color/image_raw
       Name: Camera_Robot_0
       Overlay Alpha: 0.5
       Queue Size: 2
@@ -198,7 +235,7 @@ Visualization Manager:
     - Class: rviz/Camera
       Enabled: true
       Image Rendering: background and overlay
-      Image Topic: /robot_1/color/image_raw
+      Image Topic: /robot_1/camera_ir/color/image_raw
       Name: Camera_Robot_1
       Overlay Alpha: 0.5
       Queue Size: 2
@@ -221,7 +258,7 @@ Visualization Manager:
     - Class: rviz/Camera
       Enabled: true
       Image Rendering: background and overlay
-      Image Topic: /robot_2/color/image_raw
+      Image Topic: /robot_2/camera_ir/color/image_raw
       Name: Camera_Robot_2
       Overlay Alpha: 0.5
       Queue Size: 2
@@ -232,12 +269,41 @@ Visualization Manager:
         Axes_Robot_0: false
         Axes_Robot_1: false
         Axes_Robot_2: false
+        Axes_Robot_3: false
         Camera_Robot_0: false
         Camera_Robot_1: false
+        Camera_Robot_3: false
         Grid: false
         LaserScan_Robot_0: false
         LaserScan_Robot_1: false
         LaserScan_Robot_2: false
+        LaserScan_Robot_3: false
+        Map: false
+        Value: true
+      Zoom Factor: 1
+    - Class: rviz/Camera
+      Enabled: true
+      Image Rendering: background and overlay
+      Image Topic: /robot_3/camera_ir/color/image_raw
+      Name: Camera_Robot_3
+      Overlay Alpha: 0.5
+      Queue Size: 2
+      Transport Hint: raw
+      Unreliable: false
+      Value: true
+      Visibility:
+        Axes_Robot_0: false
+        Axes_Robot_1: false
+        Axes_Robot_2: false
+        Axes_Robot_3: false
+        Camera_Robot_0: false
+        Camera_Robot_1: false
+        Camera_Robot_2: false
+        Grid: false
+        LaserScan_Robot_0: false
+        LaserScan_Robot_1: false
+        LaserScan_Robot_2: false
+        LaserScan_Robot_3: false
         Map: false
         Value: true
       Zoom Factor: 1
