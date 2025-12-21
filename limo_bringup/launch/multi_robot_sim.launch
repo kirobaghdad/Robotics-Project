@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="num_robots" default="1"/>
+    <arg name="world_name" default="$(find limo_gazebo_sim)/worlds/world3"/>
+
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(arg world_name)"/>
+        <arg name="paused" value="false"/>
+        <arg name="use_sim_time" value="true"/>
+        <arg name="gui" value="true"/>
+        <arg name="headless" value="false"/>
+        <arg name="debug" value="false"/>
+    </include>
+
+    <group if="$(eval num_robots >= 1)">
+        <include file="$(find limo_bringup)/launch/spawn_robot.launch">
+            <arg name="robot_name" value="robot_0"/>
+            <arg name="x" value="-7.0"/>
+            <arg name="y" value="-7.0"/>
+        </include>
+    </group>
+
+    <group if="$(eval num_robots >= 2)">
+        <include file="$(find limo_bringup)/launch/spawn_robot.launch">
+            <arg name="robot_name" value="robot_1"/>
+            <arg name="x" value="7.0"/>
+            <arg name="y" value="-7.0"/>
+        </include>
+    </group>
+
+    <group if="$(eval num_robots >= 3)">
+        <include file="$(find limo_bringup)/launch/spawn_robot.launch">
+            <arg name="robot_name" value="robot_2"/>
+            <arg name="x" value="7.0"/>
+            <arg name="y" value="7.0"/>
+        </include>
+    </group>
+
+    <group if="$(eval num_robots >= 4)">
+        <include file="$(find limo_bringup)/launch/spawn_robot.launch">
+            <arg name="robot_name" value="robot_3"/>
+            <arg name="x" value="-7.0"/>
+            <arg name="y" value="7.0"/>
+        </include>
+    </group>
+
+    <group if="$(eval num_robots >= 5)">
+        <include file="$(find limo_bringup)/launch/spawn_robot.launch">
+            <arg name="robot_name" value="robot_4"/>
+            <arg name="x" value="0.0"/>
+            <arg name="y" value="0.0"/>
+        </include>
+    </group>
+</launch>

@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="num_robots" default="1"/>
+
+    <group if="$(eval num_robots >= 1)">
+        <include file="$(find limo_bringup)/launch/robot_gmapping.launch">
+            <arg name="robot_name" value="robot_0"/>
+        </include>
+    </group>
+
+    <group if="$(eval num_robots >= 2)">
+        <include file="$(find limo_bringup)/launch/robot_gmapping.launch">
+            <arg name="robot_name" value="robot_1"/>
+        </include>
+    </group>
+
+    <group if="$(eval num_robots >= 3)">
+        <include file="$(find limo_bringup)/launch/robot_gmapping.launch">
+            <arg name="robot_name" value="robot_2"/>
+        </include>
+    </group>
+
+    <group if="$(eval num_robots >= 4)">
+        <include file="$(find limo_bringup)/launch/robot_gmapping.launch">
+            <arg name="robot_name" value="robot_3"/>
+        </include>
+    </group>
+
+    <group if="$(eval num_robots >= 5)">
+        <include file="$(find limo_bringup)/launch/robot_gmapping.launch">
+            <arg name="robot_name" value="robot_4"/>
+        </include>
+    </group>
+
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find limo_bringup)/rviz/gmapping.rviz"/>
+</launch>

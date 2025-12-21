@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="num_robots" default="1"/>
+
+    <group if="$(eval num_robots >= 1)">
+        <node pkg="limo_base" type="wander.py" name="wander_robot_0" args="robot_0" output="screen"/>
+    </group>
+
+    <group if="$(eval num_robots >= 2)">
+        <node pkg="limo_base" type="wander.py" name="wander_robot_1" args="robot_1" output="screen"/>
+    </group>
+
+    <group if="$(eval num_robots >= 3)">
+        <node pkg="limo_base" type="wander.py" name="wander_robot_2" args="robot_2" output="screen"/>
+    </group>
+
+    <group if="$(eval num_robots >= 4)">
+        <node pkg="limo_base" type="wander.py" name="wander_robot_3" args="robot_3" output="screen"/>
+    </group>
+
+    <group if="$(eval num_robots >= 5)">
+        <node pkg="limo_base" type="wander.py" name="wander_robot_4" args="robot_4" output="screen"/>
+    </group>
+</launch>

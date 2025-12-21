@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 
 <robot name="limo_four_diff" xmlns:xacro="http://ros.org/wiki/xacro">
+    <xacro:arg name="robot_namespace" default="robot_0"/>
 
     <xacro:include filename="$(find limo_description)/urdf/limo_xacro.xacro" />
     <xacro:include filename="$(find limo_description)/urdf/limo_four_diff.gazebo" />
@@ -36,7 +37,6 @@
             </geometry>
         </visual>
         <collision>
-            <!--origin xyz="0 0 -0.15" rpy="0 0 1.57" /-->
             <origin xyz="0 0 0" rpy="0 0 0" />
           <geometry>
               <box size="${base_x_size} ${base_y_size} ${base_z_size}"/>

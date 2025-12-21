@@ -1,35 +1,34 @@
 #!/bin/bash
 
-# Source the workspace setup script
+# Usage: ./start_simulation.sh [num_robots]
+NUM_ROBOTS=${1:-1}
+
 source ~/catkin_ws/devel/setup.bash
 
-# Define cleanup function to kill background processes
 cleanup() {
     echo ""
     echo "Caught Ctrl+C. Terminating processes..."
-    # Send SIGINT to all background jobs (roslaunch handles this to shut down nodes)
-    kill -INT $(jobs -p)
-    # Wait for processes to exit
+    killall -9 gzclient gzserver rviz
+    kill -INT $(jobs -p) 2>/dev/null
     wait
-    echo "Gazebo and RViz closed."
+    echo "Simulation closed."
 }
 
-# Trap SIGINT (Ctrl+C) to call the cleanup function
 trap cleanup SIGINT
 
-# 1. Launch Gazebo simulation in the background
-echo "Launching Gazebo..."
-roslaunch limo_gazebo_sim limo_four_diff.launch &
+echo "Launching Gazebo with $NUM_ROBOTS robots..."
+roslaunch limo_bringup multi_robot_sim.launch num_robots:=$NUM_ROBOTS &
 
-# 2. Launch Gmapping in the background (wait a bit for Gazebo to initialize)
-sleep 5
-echo "Launching Gmapping..."
-roslaunch limo_bringup limo_gmapping.launch &
+sleep 8
+echo "Launching Gmapping for $NUM_ROBOTS robots..."
+roslaunch limo_bringup multi_robot_gmapping.launch num_robots:=$NUM_ROBOTS &
 
-# 3. Launch Visual Search Node
 sleep 3
-echo "Launching Visual Search..."
-rosrun limo_base visual_search_node.py &
+echo "Launching Map Merger..."
+rosrun limo_base map_merger.py $NUM_ROBOTS &
 
-# Wait for all background processes to finish
+sleep 2
+echo "Launching Wander nodes for $NUM_ROBOTS robots..."
+roslaunch limo_bringup multi_robot_wander.launch num_robots:=$NUM_ROBOTS &
+
 wait
