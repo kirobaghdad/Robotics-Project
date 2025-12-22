@@ -7,14 +7,12 @@ source ~/catkin_ws/devel/setup.bash
 cleanup() {
     echo ""
     echo "Caught Ctrl+C. Terminating processes..."
-    # Send SIGINT to all background jobs (roslaunch handles this to shut down nodes)
-    kill -INT $(jobs -p)
-    # Wait for processes to exit
+    killall -9 gzclient gzserver rviz
+    kill -INT $(jobs -p) 2>/dev/null
     wait
-    echo "Gazebo and RViz closed."
+    echo "Simulation closed."
 }
 
-# Trap SIGINT (Ctrl+C) to call the cleanup function
 trap cleanup SIGINT
 
 # 1. Launch Gazebo simulation in the background
@@ -25,6 +23,10 @@ roslaunch limo_gazebo_sim limo_four_diff.launch &
 sleep 5
 echo "Launching Gmapping..."
 roslaunch limo_bringup limo_gmapping.launch &
+# 2. Launch Gmapping in the background (wait a bit for Gazebo to initialize)
+sleep 5
+echo "Launching Navigation..."
+rosrun limo_base wander.py &
 
 # 3. Launch Visual Search Node
 sleep 3
